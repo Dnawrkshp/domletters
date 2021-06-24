@@ -69,72 +69,31 @@ int is_word(char * str)
   return TRUE;
 }
 
-// Reads a given file into a buffer
-// Returns number of bytes read
-// Returns 0 on empty file or failure
-// Which in our use-case is equivalent
-size_t read_file(char * filepath, char * buffer)
-{
-  FILE * fp;
-  long size;
-  size_t result;
-
-  // open
-  fp = fopen(filepath, "rb");
-  if (fp == NULL)
-  {
-    printf("Error opening %s\n", filepath);
-    return 0;
-  }
-
-  // seek, get size, return to start of stream
-  fseek(fp, 0, SEEK_END);
-  size = ftell(fp);
-  rewind(fp);
-
-  // read into buffer
-  result = fread(buffer, 1, size, fp);
-  if (result != size)
-  {
-    printf("Error reading %s\n", filepath);
-    return 0;
-  }
-
-  // close and return number of bytes read
-  fclose(fp);
-  return result;
-}
-
 // program entrypoint
 int main(int argc, char * argv[])
 {
   char buffer[BUFFER_SIZE];
   char * token;
   int result = 0;
-
-  // check command line args
-  if (argc != 2)
-  {
-    printf("Invalid arguments.\n\ndomletters <inputfile>\n");
-    exit(-1);
-  }
-
-  // read file into buffer
-  if (read_file(argv[1], buffer) == 0)
-    exit(-2);
-
-  // iterate string by whitespace delimiters
-  token = strtok(buffer, DELIMITERS);
-  while (token != NULL)
-  {
-    // if is alphabetic word, then count dominant letters
-    if (is_word(token))
-      result += count_dominant_letters(token);
-
-    // next substring
-    token = strtok(NULL, DELIMITERS);
-  }
   
+
+  // read stdin into buffer
+  if (fread(buffer, 1, BUFFER_SIZE-1, stdin) > 0)
+  {
+    // break up input string by whitespace
+    // iterate each piece
+    token = strtok(buffer, DELIMITERS);
+    while (token != NULL)
+    {
+      // if word only contains alphabetic characters, count dominant letters
+      if (is_word(token))
+        result += count_dominant_letters(token);
+
+      // get next word
+      token = strtok(NULL, DELIMITERS);
+    }
+  }
+
   // print result and exit
   printf("%d\n", result);
   exit(0);
