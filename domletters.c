@@ -1,7 +1,7 @@
 // Daniel Gerendasy
 // CS461P - HW1
-// domeletters.c
-// 
+// June 24, 2021
+// Reads stdin and sums the number of reoccurences of dominant letters in words containing only alphabetic characters
 
 #include <stdio.h>
 #include <string.h>
